@@ -9,13 +9,14 @@ import NewsDetails from "../screens/NewsDetail";
 import CategoryList from "../screens/CategoryList";
 import About from "../screens/About";
 
-const Stack = createNativeStackNavigator();
+import AppUi from "../ReduxTool/AppUi";
 
-export default function AuthStack() {
+const AuthStack = () => {
+  const Stack = createNativeStackNavigator();
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="SplashScreen"
+      initialRouteName={"SplashScreen"}
     >
       <Stack.Screen name="SplashScreen" component={SplashScreen} />
       <Stack.Screen name="Home" component={Tabs} />
@@ -25,6 +26,9 @@ export default function AuthStack() {
       <Stack.Screen name="NewsDetails" component={NewsDetails} />
       <Stack.Screen name="CategoryList" component={CategoryList} />
       <Stack.Screen name="About" component={About} />
+      <Stack.Screen name="AppUi" component={AppUi} />
     </Stack.Navigator>
   );
-}
+};
+
+export default AuthStack;
