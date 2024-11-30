@@ -75,7 +75,7 @@ export default function Onboarding() {
     return (
       <View style={styles().buttonCircle}>
         <IonIcons
-          name="md-checkmark"
+          name="checkmark-circle-outline"
           color="rgba(255,255,255, .9 )"
           size={24}
         />

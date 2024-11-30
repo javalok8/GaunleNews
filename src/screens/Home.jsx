@@ -23,7 +23,7 @@ const Home = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.text}> Lokendra Main Screen</Text>
       <Button title="Logout" onPress={handleLogout} />
-      <Button title="Counter" onPress={navigateToCounter} />
+      <Button title="Counter Lok" onPress={navigateToCounter} />
     </View>
   );
 };

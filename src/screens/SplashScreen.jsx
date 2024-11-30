@@ -14,7 +14,7 @@ export default function SplashScreen() {
     setTimeout(() => {
       hideSplashScreen();
       navigation.navigate("Onboarding");
-    }, 3000);
+    }, 1000);
   }, []);
 
   const renderSplashScreen = () => {
