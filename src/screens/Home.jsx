@@ -2,6 +2,8 @@ import { View, Text, StyleSheet, Button } from "react-native";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../ReduxTool/authSlice";
+//for locally store key-value pair data
+import { saveData, getData, clearData } from "../utils/storageUtils";
 
 const Home = ({ navigation }) => {
   const user = useSelector((state) => state.auth);
@@ -10,7 +12,13 @@ const Home = ({ navigation }) => {
 
   const dispatch = useDispatch();
 
+  //clearing localStorage date
+  const handleClearLocalData = async () => {
+    await clearData();
+  };
+
   const handleLogout = () => {
+    handleClearLocalData();
     dispatch(logout(null));
     navigation.replace("Login");
   };
@@ -18,12 +26,16 @@ const Home = ({ navigation }) => {
   const navigateToCounter = () => {
     navigation.navigate("AppUi");
   };
+  const navigateToValidation = () => {
+    navigation.navigate("About");
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.text}> Lokendra Main Screen</Text>
       <Button title="Logout" onPress={handleLogout} />
       <Button title="Counter Lok" onPress={navigateToCounter} />
+      <Button title="Validation Test" onPress={navigateToValidation} />
     </View>
   );
 };

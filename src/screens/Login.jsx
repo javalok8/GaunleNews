@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import {
   Button,
   Image,
@@ -8,6 +8,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
+  Pressable,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,20 +17,134 @@ import IonIcons from "@expo/vector-icons/Ionicons";
 import { login } from "../ReduxTool/authSlice";
 import { LinearGradient } from "expo-linear-gradient";
 import Entypo from "@expo/vector-icons/Entypo";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+//for api connection
+import axios from "axios";
+//for locally store key-value pair data
+import { saveData } from "../utils/storageUtils";
 
 const Login = () => {
   const navigation = useNavigation();
 
+  /**
+   *
+   * ============================ CODE FOR VALIDATION FIELDS ===============================
+   *
+   */
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    let valid = true;
+    let newErrors = {};
+
+    // Name Validation
+    if (!form.email.trim()) {
+      newErrors.email = "Email is required";
+      valid = false;
+    }
+
+    // Password Validation
+    if (!form.password) {
+      newErrors.password = "Password is required";
+      valid = false;
+    } else if (form.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
+  const handleChange = (field, value) => {
+    setForm({ ...form, [field]: value });
+    setErrors({ ...errors, [field]: "" }); // Clear error for field on edit
+  };
+  /**
+   * ============================VALIDATION CODE ENDED HERE==============================
+   */
+
+  //for toogle password eye icon
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const toggleSecureTextEntry = () => {
+    setSecureTextEntry(!secureTextEntry);
+  };
+
+  /**
+   *
+   * =================================CODE FOR REDUX TOOLKIT FOR STATE MANAGMENT ================================
+   *
+   */
   const user = useSelector((state) => state.auth);
-
   console.log(user, "I'm current user");
-
   const dispatch = useDispatch();
-
-  const handleLogin = () => {
+  const handleLoginRedux = () => {
     dispatch(login({ name: "lokendra24" }));
     navigation.navigate("Home");
   };
+  /**
+   *
+   * ====================== CODE FOR REDUX TOOLKIT FOR STATE MANAGMENT ENDED HERE =================
+   *
+   */
+
+  /**
+   *
+   * =================================CODE FOR API CONNECTION================================
+   *
+   */
+  handleLoginApi = async () => {
+    if (validate()) {
+      email = form.email;
+      password = form.password;
+      try {
+        const response = await axios.post(
+          "http://192.168.1.74:3000/api/users/login",
+          {
+            email,
+            password,
+          }
+        );
+        console.log("====response data====" + response.status);
+        if (response.status === 201) {
+          await saveData("email", email);
+          await saveData("password", password);
+          Alert.alert("Logged In", "Logged In Successfully!");
+          navigation.navigate("Home");
+        } else {
+          Alert.alert("Error", "Register Failed!");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    } else if (response.status === 401) {
+      Alert.alert(" Error", " Invalid email or password ");
+    }
+  };
+  /**
+   *
+   * =================================CODE FOR API CONNECTION ENDED================================
+   *
+   */
+
+  /**
+   *
+   * =================================CODE FOR FORGOT PASSWORD ================================
+   *
+   */
+  const handleForgotPassword = () => {
+    Alert.alert("Forgot Password", "Forgot Password!");
+  };
+  /**
+   *
+   * =================================CODE FOR FORGOT PASSWORD ENDED ================================
+   *
+   */
 
   handleRegister = () => {
     navigation.navigate("Register");
@@ -49,38 +165,62 @@ const Login = () => {
         <Text style={styles.signInTextHeader}>Sign in to Your Account</Text>
       </View>
       <View style={styles.inputContainer}>
-        <IonIcons
-          name="person"
+        <Entypo
+          name="email"
           size={24}
-          color={"#9a9a9a"}
+          color="#9a9a9a"
           style={styles.inputIcon}
         />
-        <TextInput style={styles.inputStyle} placeholder="Email" />
+        <TextInput
+          style={[styles.inputStyle, errors.email && styles.errorBorder]}
+          value={form.email}
+          placeholder="Email"
+          onChangeText={(value) => handleChange("email", value)}
+          keyboardType="email-address"
+        />
+        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
       </View>
       <View style={styles.inputPassContainer}>
         <Entypo
           name="lock"
           size={24}
-          color={"#9a9a9a"}
+          color="#9a9a9a"
           style={styles.inputIcon}
         />
 
         <TextInput
-          style={styles.inputStyle}
+          style={[styles.inputStyle, errors.password && styles.errorBorder]}
+          value={form.password}
           placeholder="Password"
-          secureTextEntry
+          onChangeText={(value) => handleChange("password", value)}
+          secureTextEntry={secureTextEntry}
         />
+        {errors.password && (
+          <Text style={styles.errorText}>{errors.password}</Text>
+        )}
+        <TouchableOpacity onPress={toggleSecureTextEntry}>
+          <FontAwesome
+            name={secureTextEntry ? "eye-slash" : "eye"}
+            size={24}
+            color="#9a9a9a"
+            style={styles.eyeIcon}
+          />
+        </TouchableOpacity>
       </View>
-      <Text style={styles.forgotPassText}>Forgot Your Password?</Text>
+      <Pressable onPress={handleForgotPassword}>
+        <Text style={styles.forgotPassText}>Forgot Your Password ?</Text>
+      </Pressable>
       <View style={styles.signInButtonContainer}>
         <Text style={styles.signInText}>Sign in</Text>
-        <LinearGradient
-          // Button Linear Gradient
-          colors={["#f97794", "#623aa2"]}
-          style={styles.buttonLinearGradient}
-        >
-          <IonIcons name="arrow-forward" size={24} color={"white"} />
-        </LinearGradient>
+        <Pressable onPress={handleLoginApi}>
+          <LinearGradient
+            // Button Linear Gradient
+            colors={["#f97794", "#623aa2"]}
+            style={styles.buttonLinearGradient}
+          >
+            <IonIcons name="arrow-forward" size={24} color={"white"} />
+          </LinearGradient>
+        </Pressable>
       </View>
       <TouchableOpacity onPress={handleRegister}>
         <Text style={styles.signUpFooterText}>
@@ -146,6 +286,10 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 5,
   },
+  eyeIcon: {
+    marginRight: 15,
+    marginLeft: 5,
+  },
   inputPassContainer: {
     backgroundColor: "white",
     flexDirection: "row",
@@ -166,8 +310,9 @@ const styles = StyleSheet.create({
   forgotPassText: {
     fontSize: 15,
     textAlign: "right",
-    color: "#BEBEBE",
+    color: "blue",
     width: "90%",
+    textDecorationColor: "blue",
   },
   signInButtonContainer: {
     flexDirection: "row",
@@ -202,6 +347,14 @@ const styles = StyleSheet.create({
   bottomImageStyle: {
     width: "450",
     height: 150,
+  },
+  errorBorder: {
+    borderColor: "red",
+  },
+  errorText: {
+    color: "red",
+    marginRight: 10,
+    fontSize: 12,
   },
 });
 

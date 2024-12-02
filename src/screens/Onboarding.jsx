@@ -1,15 +1,42 @@
 import { StyleSheet, View, Text, Image } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AppIntroSlider from "react-native-app-intro-slider";
 import IonIcons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 
 //import styles
 import { styles } from "../styles/OnboardingStyles";
+//for locally store key-value pair data
+import { saveData, getData, clearData } from "../utils/storageUtils";
 
 export default function Onboarding() {
   const navigation = useNavigation();
 
+  /**
+   *
+   * ============================ CODE FOR CHECKING LOCAL DATA FOR SETSTORAGE ===============================
+   *
+   */
+  const [isLocalData, setIsLocalData] = useState(false);
+  useEffect(() => {
+    const checkLocalData = async () => {
+      const email = await getData("email");
+      const pass = await getData("password");
+      setIsLocalData(email ? true : false);
+    };
+    checkLocalData();
+  }, []);
+  /**
+   *
+   * ============================ CHECKING LOCAL DATA CODE ENDED ===============================
+   *
+   */
+
+  /**
+   *
+   * ============================ CODE FOR ONBOARDING SLIDER ===============================
+   *
+   */
   const slides = [
     {
       key: 1,
@@ -40,6 +67,12 @@ export default function Onboarding() {
       backgroundColor: "#22bcb5",
     },
   ];
+
+  /**
+   *
+   * ============================ CODE FOR ONBOARDING SLIDER ENDED ===============================
+   *
+   */
 
   const _renderItem = ({ item }) => {
     return (
@@ -92,7 +125,16 @@ export default function Onboarding() {
   };
 
   const _onEndReached = () => {
-    navigation.navigate("Login");
+    //get credentials from local storage
+    console.log(
+      "Check status of local data in onEndReached() function: " + isLocalData
+    );
+
+    if (isLocalData) {
+      navigation.navigate("Home");
+    } else {
+      navigation.navigate("Login");
+    }
   };
 
   return (
