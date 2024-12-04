@@ -20,6 +20,7 @@ export default function Tabs() {
           marginVertical: moderateScale(10),
         },
         showLabels: false,
+        headerShown: false,
       }}
     >
       <Tab.Screen
