@@ -7,6 +7,7 @@ import Favorite from "../screens/Favorite";
 import Notification from "../screens/Notification";
 import Account from "../screens/Account";
 import { moderateScale } from "react-native-size-matters";
+import NewsDashboard from "../screens/NewsDashboard";
 
 export default function Tabs() {
   const Tab = createBottomTabNavigator();
@@ -33,7 +34,7 @@ export default function Tabs() {
 
       <Tab.Screen
         name="Favorite"
-        component={Favorite}
+        component={NewsDashboard}
         options={{
           tabBarIcon: ({ size, color }) => (
             <IonIcons name="heart-sharp" size={size} color={color} />

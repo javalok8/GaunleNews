@@ -18,6 +18,8 @@ import { login } from "../ReduxTool/authSlice";
 import { LinearGradient } from "expo-linear-gradient";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+//for vibrate button
+import * as Haptics from "expo-haptics";
 //for api connection
 import axios from "axios";
 //for locally store key-value pair data
@@ -62,6 +64,7 @@ const Login = () => {
   };
 
   const handleChange = (field, value) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setForm({ ...form, [field]: value });
     setErrors({ ...errors, [field]: "" }); // Clear error for field on edit
   };
@@ -72,6 +75,7 @@ const Login = () => {
   //for toogle password eye icon
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const toggleSecureTextEntry = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setSecureTextEntry(!secureTextEntry);
   };
 
@@ -99,6 +103,7 @@ const Login = () => {
    *
    */
   handleLoginApi = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     if (validate()) {
       email = form.email;
       password = form.password;
@@ -138,6 +143,7 @@ const Login = () => {
    *
    */
   const handleForgotPassword = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     Alert.alert("Forgot Password", "Forgot Password!");
   };
   /**
@@ -147,6 +153,7 @@ const Login = () => {
    */
 
   handleRegister = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     navigation.navigate("Register");
   };
 
@@ -177,6 +184,7 @@ const Login = () => {
           placeholder="Email"
           onChangeText={(value) => handleChange("email", value)}
           keyboardType="email-address"
+          autoCapitalize="none"
         />
         {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
       </View>

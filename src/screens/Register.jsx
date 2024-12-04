@@ -16,6 +16,8 @@ import IonIcons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
+//for vibrate button
+import * as Haptics from "expo-haptics";
 //for api connection
 import axios from "axios";
 //for locally store key-value pair data
@@ -88,6 +90,7 @@ const Register = () => {
   };
 
   const handleChange = (field, value) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setForm({ ...form, [field]: value });
     setErrors({ ...errors, [field]: "" }); // Clear error for field on edit
   };
@@ -97,8 +100,21 @@ const Register = () => {
    */
 
   const backToLogin = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     navigation.navigate("Login");
   };
+
+  /**
+   * ============================ CODE FOR SOCIAL MEDIA CONNECTION ==============================
+   */
+  const handleSocialMediaConnection = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    Alert.alert("Social Media Connection", "Social Media Connection!");
+  };
+  /**
+   *
+   * ============================ CODE FOR SOCIAL MEDIA CONNECTION ENDED ==============================
+   */
 
   /**
    *
@@ -106,6 +122,7 @@ const Register = () => {
    *
    */
   handleRegister = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     if (validate()) {
       name = form.name;
       email = form.email;
@@ -185,6 +202,7 @@ const Register = () => {
           placeholder="Password"
           onChangeText={(value) => handleChange("password", value)}
           secureTextEntry
+          autoCapitalize="none"
         />
         {errors.password && (
           <Text style={styles.errorText}>{errors.password}</Text>
@@ -203,6 +221,7 @@ const Register = () => {
           placeholder="Email"
           onChangeText={(value) => handleChange("email", value)}
           keyboardType="email-address"
+          autoCapitalize="none"
         />
         {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
       </View>
@@ -218,6 +237,7 @@ const Register = () => {
           value={form.phone}
           placeholder="Mobile"
           keyboardType="numeric"
+          maxLength={10}
           onChangeText={(value) => handleChange("phone", value)}
         />
         {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
@@ -250,33 +270,36 @@ const Register = () => {
         </View>
       </View>
       <View style={styles.footerSocialMediaContainer}>
-        <TouchableOpacity onPress={handleRegister}>
-          <Text style={styles.signUpFooterText}>
-            Or create account using social media
-          </Text>
+        <Text style={styles.signUpFooterText}>
+          Or create account using social media
+        </Text>
 
-          <View style={styles.socialMediaContainer}>
+        <View style={styles.socialMediaContainer}>
+          <TouchableOpacity onPress={handleSocialMediaConnection}>
             <Entypo
               name="facebook-with-circle"
               size={30}
               color="#9a9a9a"
               style={styles.socialIcon}
             />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleSocialMediaConnection}>
             <AntDesign
               name="google"
               size={30}
               color="#9a9a9a"
               style={styles.socialIcon}
             />
-
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleSocialMediaConnection}>
             <Entypo
               name="twitter-with-circle"
               size={30}
               color="#9a9a9a"
               style={styles.socialIcon}
             />
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.footerImageContainer}>
         <ImageBackground

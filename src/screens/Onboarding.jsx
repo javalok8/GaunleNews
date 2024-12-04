@@ -4,17 +4,17 @@ import AppIntroSlider from "react-native-app-intro-slider";
 import IonIcons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 
-//import styles
-import { styles } from "../styles/OnboardingStyles";
 //for locally store key-value pair data
 import { saveData, getData, clearData } from "../utils/storageUtils";
+//for vibrate button
+import * as Haptics from "expo-haptics";
 
 export default function Onboarding() {
   const navigation = useNavigation();
 
   /**
    *
-   * ============================ CODE FOR CHECKING LOCAL DATA FOR SETSTORAGE ===============================
+   * ============================ CODE FOR CHECKING LOCAL DATA FOR SET STORAGE ===============================
    *
    */
   const [isLocalData, setIsLocalData] = useState(false);
@@ -76,25 +76,26 @@ export default function Onboarding() {
 
   const _renderItem = ({ item }) => {
     return (
-      <View style={styles().slide}>
-        <View style={styles().titleContainer}>
-          <Text style={styles().title}>{item.title}</Text>
+      <View style={styles.slide}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{item.title}</Text>
         </View>
 
-        <View style={styles().imageContainer}>
-          <Image source={item.image} style={styles().image} />
+        <View style={styles.imageContainer}>
+          <Image source={item.image} style={styles.image} />
         </View>
 
-        <View style={styles().textContainer}>
-          <Text style={styles().text}>{item.text}</Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.text}>{item.text}</Text>
         </View>
       </View>
     );
   };
 
   const _renderNextButton = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     return (
-      <View style={styles().buttonCircle}>
+      <View style={styles.buttonCircle}>
         <IonIcons
           name="arrow-forward-outline"
           color="rgba(255,255,255, .9 )"
@@ -105,8 +106,9 @@ export default function Onboarding() {
   };
 
   const _renderDoneButton = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     return (
-      <View style={styles().buttonCircle}>
+      <View style={styles.buttonCircle}>
         <IonIcons
           name="checkmark-circle-outline"
           color="rgba(255,255,255, .9 )"
@@ -117,23 +119,21 @@ export default function Onboarding() {
   };
 
   const _renderSkipButton = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     return (
-      <View style={styles().skipView}>
-        <Text style={styles().skipTextColor}>Skip</Text>
+      <View style={styles.skipView}>
+        <Text style={styles.skipTextColor}>Skip</Text>
       </View>
     );
   };
 
   const _onEndReached = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     //get credentials from local storage
-    console.log(
-      "Check status of local data in onEndReached() function: " + isLocalData
-    );
-
     if (isLocalData) {
-      navigation.navigate("Home");
+      navigation.navigate("Tab");
     } else {
-      navigation.navigate("Login");
+      navigation.navigate("Tab");
     }
   };
 
@@ -153,3 +153,63 @@ export default function Onboarding() {
     />
   );
 }
+
+const styles = StyleSheet.create({
+  slide: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+  },
+  titleContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    paddingStart: "8%",
+    paddingRight: "8%",
+  },
+  title: {
+    color: "#182952",
+    fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  imageContainer: {
+    flex: 3,
+    justifyContent: "center",
+  },
+  image: {
+    width: 300,
+    height: 300,
+    resizeMode: "contain",
+  },
+  textContainer: {
+    flex: 1,
+    justifyContent: "flex-start",
+    paddingStart: "8%",
+    paddingRight: "8%",
+  },
+
+  text: {
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  buttonCircle: {
+    width: 40,
+    height: 40,
+    backgroundColor: "rgba(0, 0, 0, .2)",
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  skipTextColor: {
+    color: "#062743",
+    fontWeight: "bold",
+  },
+  skipView: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});

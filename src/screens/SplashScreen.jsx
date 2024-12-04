@@ -1,7 +1,20 @@
-import { StyleSheet, View, Text, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  ImageBackground,
+  StatusBar,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Platform } from "react-native";
+import Animated, {
+  FadeInRight,
+  FadeInLeft,
+  FadeInDown,
+  FadeInUp,
+} from "react-native-reanimated";
+
 export default function SplashScreen() {
   const [isVisible, setIsVisible] = useState(true);
   const navigation = useNavigation();
@@ -14,18 +27,34 @@ export default function SplashScreen() {
     setTimeout(() => {
       hideSplashScreen();
       navigation.navigate("Onboarding");
-    }, 1000);
+    }, 3000);
   }, []);
 
   const renderSplashScreen = () => {
     return (
-      <View style={styles.SplashScreen_RootView}>
-        <View style={styles.SplashScreen_ChildView}>
-          <Image
-            source={require("../assets/splash_icon_dark.png")}
-            style={{ width: 150, height: 150, resizeMode: "contain" }}
-          />
-        </View>
+      <View style={styles.MainContainer}>
+        <StatusBar barStyle="light-content" />
+        <ImageBackground
+          source={require("../assets/splash-image.jpg")}
+          resizeMode="cover"
+          style={styles.styleBackgroundImage}
+        >
+          <View style={styles.styleTextWrapper}>
+            <Animated.Text
+              entering={FadeInUp.delay(2000).duration(1000)}
+              style={styles.styleTitleText}
+            >
+              Gaunle News
+            </Animated.Text>
+            <Animated.Text
+              entering={FadeInDown.delay(3000).duration(1000)}
+              style={styles.styleDescriptionText}
+            >
+              Get breaking news and personalized updates direct to your feed
+              from Gaunle News
+            </Animated.Text>
+          </View>
+        </ImageBackground>
       </View>
     );
   };
@@ -40,24 +69,33 @@ export default function SplashScreen() {
 const styles = StyleSheet.create({
   MainContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: Platform.OS === "ios" ? 20 : 0,
-    backgroundColor: "#ffffff",
   },
-
-  SplashScreen_RootView: {
-    justifyContent: "center",
+  styleBackgroundImage: {
     flex: 1,
-    margin: 10,
-    position: "absolute",
-    width: "100%",
-    height: "100%",
   },
-
-  SplashScreen_ChildView: {
-    justifyContent: "center",
-    alignItems: "center",
+  styleTextWrapper: {
     flex: 1,
+    color: "white",
+    justifyContent: "flex-end",
+    paddingBottom: 50,
+    paddingHorizontal: 30,
+    gap: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.2)",
+  },
+  styleTitleText: {
+    color: "white",
+    fontSize: 24,
+    fontWeight: "800",
+    letterSpacing: 1.5,
+    lineHeight: 250,
+    textAlign: "center",
+  },
+  styleDescriptionText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "500",
+    letterSpacing: 1.5,
+    lineHeight: 40,
+    textAlign: "center",
   },
 });

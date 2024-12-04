@@ -19,7 +19,7 @@ const AuthStack = () => {
       initialRouteName={"SplashScreen"}
     >
       <Stack.Screen name="SplashScreen" component={SplashScreen} />
-      <Stack.Screen name="Home" component={Tabs} />
+      <Stack.Screen name="Tab" component={Tabs} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="Onboarding" component={Onboarding} />
