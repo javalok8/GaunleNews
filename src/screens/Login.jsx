@@ -145,6 +145,7 @@ const Login = () => {
   const handleForgotPassword = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     Alert.alert("Forgot Password", "Forgot Password!");
+    navigation.navigate("ForgotPasswordModal");
   };
   /**
    *

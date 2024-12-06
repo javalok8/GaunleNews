@@ -2,7 +2,7 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 
-const SearchBar = () => {
+const SearchingBar = () => {
   return (
     <View style={styles.container}>
       <View style={styles.searchBar}>
@@ -17,7 +17,7 @@ const SearchBar = () => {
   );
 };
 
-export default SearchBar;
+export default SearchingBar;
 
 const styles = StyleSheet.create({
   container: {
