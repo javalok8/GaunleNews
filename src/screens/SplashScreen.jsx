@@ -26,8 +26,8 @@ export default function SplashScreen() {
   useEffect(() => {
     setTimeout(() => {
       hideSplashScreen();
-      navigation.navigate("Onboarding");
-    }, 3000);
+      navigation.navigate("Tab");
+    }, 2000);
   }, []);
 
   const renderSplashScreen = () => {

@@ -1,15 +1,25 @@
-import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ScrollView,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import SearchingBar from "../components/SearchingBar";
 import BreakingNews from "../components/BreakingNews";
+import Categories from "../components/Categories";
+import NewsList from "../components/NewsList";
+import Loading from "../components/Loading";
 
 export default function NewsDashboard() {
   const { top: safeTop } = useSafeAreaInsets();
   //breaking news state
   const [breakingNews, setBreakingNews] = useState([{}]);
+  const [news, setNews] = useState([{}]);
   const [isLoading, setIsLoading] = useState(true);
 
   const getBreakingNews = async () => {
@@ -26,21 +36,56 @@ export default function NewsDashboard() {
       console.log("Lokendra Error from URL: ", error);
     }
   };
+  //to get All the news
+  const getNews = async (category = "") => {
+    try {
+      let categoryString = "";
+      if (category.length !== 0) {
+        categoryString = `&category=${category}`;
+      }
+      const URL = `https://newsdata.io/api/1/news?apikey=pub_61159224d4587a387d6a2276b18050fcd1a0d&language=en&image=1&removeduplicate=1&size=10${categoryString}`;
+      const response = await axios.get(URL);
+      console.log("===Lokendra Get All News: ", response.data.status);
+      if (response && response.data) {
+        setNews(response.data.results);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.log("Lokendra Error from URL: ", error);
+    }
+  };
 
   useEffect(() => {
     getBreakingNews();
+    getNews();
   }, []);
 
+  /**
+   *  ============== method to change category
+   *
+   */
+  const onCatChanged = (category) => {
+    console.log("======= Lokendra Selected Category is : " + category);
+    setNews([]);
+    getNews(category);
+  };
+
   return (
-    <View style={[styles.container, { marginTop: safeTop }]}>
+    <ScrollView style={[styles.container, { marginTop: safeTop }]}>
       <Header />
-      <SearchingBar />
+      <SearchingBar withHorizontalPadding={true} />
       {isLoading ? (
-        <ActivityIndicator size="large" color="black" />
+        <Loading size={"large"} color="black" />
       ) : (
-        <BreakingNews newsList={breakingNews} />
+        <BreakingNews breakingNews={breakingNews} />
       )}
-    </View>
+      <Categories onCategoryChanged={onCatChanged} />
+      {isLoading ? (
+        <Loading size={"large"} color="black" />
+      ) : (
+        <NewsList newsList={news} />
+      )}
+    </ScrollView>
   );
 }
 

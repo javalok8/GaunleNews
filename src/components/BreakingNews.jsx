@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 const { width, height } = Dimensions.get("screen").width;
 
-const BreakingNews = ({ newsList }) => {
+const BreakingNews = ({ breakingNews }) => {
   const navigation = useNavigation();
   const flatlistRef = useRef();
   // Get Dimesnions
@@ -23,7 +23,7 @@ const BreakingNews = ({ newsList }) => {
   // Auto Scroll
   useEffect(() => {
     let interval = setInterval(() => {
-      if (activeIndex === carouselData.length - 1) {
+      if (activeIndex === breakingNews.length - 1) {
         flatlistRef.current.scrollToIndex({
           index: 0,
           animation: true,
@@ -44,56 +44,56 @@ const BreakingNews = ({ newsList }) => {
     offset: screenWidth * index, // for first image - 300 * 0 = 0pixels, 300 * 1 = 300, 300*2 = 600
     index: index,
   });
-  // Data for carousel
-  const carouselData = [
-    {
-      id: "01",
-      image: require("../assets/images/1.jpg"),
-      title: "संसारको सबैभन्दा बुढो चरा, ७४ वर्षको उमेरमा पार्यो अण्डा",
-      sourceName: "ESPN",
-    },
-    {
-      id: "02",
-      image: require("../assets/images/2.jpg"),
-      title: "के राजीनामा दिँदैछन् एप्पलका सीईओले",
-      sourceName: "Narchyang",
-    },
-    {
-      id: "03",
-      image: require("../assets/images/3.jpg"),
-      title: "सोसल मिडियाको लत छ ? यसरी छुटाउनुहोस्” ",
-      sourceName: "Shikha",
-    },
-    {
-      id: "04",
-      image: require("../assets/images/4.jpg"),
-      title:
-        "‘पुष्पा २’ बन्यो भारत र विश्वभर सर्वाधिक ओपनिङ गर्ने भारतीय फिल्म ",
-      sourceName: "Histan",
-    },
-    {
-      id: "05",
-      image: require("../assets/images/5.jpg"),
-      title: "रङ नम्बर : कति मासु खान्छौं भगवान् ! ",
-      sourceName: "Doba",
-    },
-    {
-      id: "06",
-      image: require("../assets/images/6.jpg"),
-      title: "एनपीएलमा शतक हान्ने पहिलो खेलाडी बने आन्द्रेस” ",
-      sourceName: "Narchyang Lekha",
-    },
-  ];
+  // // Data for carousel
+  // const carouselData = [
+  //   {
+  //     id: "01",
+  //     image: require("../assets/images/1.jpg"),
+  //     title: "संसारको सबैभन्दा बुढो चरा, ७४ वर्षको उमेरमा पार्यो अण्डा",
+  //     sourceName: "ESPN",
+  //   },
+  //   {
+  //     id: "02",
+  //     image: require("../assets/images/2.jpg"),
+  //     title: "के राजीनामा दिँदैछन् एप्पलका सीईओले",
+  //     sourceName: "Narchyang",
+  //   },
+  //   {
+  //     id: "03",
+  //     image: require("../assets/images/3.jpg"),
+  //     title: "सोसल मिडियाको लत छ ? यसरी छुटाउनुहोस्” ",
+  //     sourceName: "Shikha",
+  //   },
+  //   {
+  //     id: "04",
+  //     image: require("../assets/images/4.jpg"),
+  //     title:
+  //       "‘पुष्पा २’ बन्यो भारत र विश्वभर सर्वाधिक ओपनिङ गर्ने भारतीय फिल्म ",
+  //     sourceName: "Histan",
+  //   },
+  //   {
+  //     id: "05",
+  //     image: require("../assets/images/5.jpg"),
+  //     title: "रङ नम्बर : कति मासु खान्छौं भगवान् ! ",
+  //     sourceName: "Doba",
+  //   },
+  //   {
+  //     id: "06",
+  //     image: require("../assets/images/6.jpg"),
+  //     title: "एनपीएलमा शतक हान्ने पहिलो खेलाडी बने आन्द्रेस” ",
+  //     sourceName: "Narchyang Lekha",
+  //   },
+  // ];
 
   //  Display Images slider // UI
   const renderItem = ({ item, index }) => {
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate("Notification", { item })}
+        onPress={() => navigation.navigate("NewsDetail", { item })}
       >
-        <View key={item.id} style={styles.itemWrapper}>
+        <View key={item.article_id} style={styles.itemWrapper}>
           <Image
-            source={item.image}
+            source={{ uri: item.image_url }}
             style={{ height: 200, width: screenWidth, borderRadius: 20 }}
           />
           <LinearGradient
@@ -107,7 +107,7 @@ const BreakingNews = ({ newsList }) => {
                   style={styles.sourceIcon}
                 />
               )}
-              <Text style={styles.sourceName}>{item.sourceName}</Text>
+              <Text style={styles.sourceName}>{item.source_name}</Text>
             </View>
             <Text style={styles.title} numberOfLines={2}>
               {item.title}
@@ -122,12 +122,10 @@ const BreakingNews = ({ newsList }) => {
   const handleScroll = (event) => {
     // Get the scroll position
     const scrollPosition = event.nativeEvent.contentOffset.x;
-    console.log({ scrollPosition });
     // Get the index of current active item
 
     const index = scrollPosition / screenWidth;
 
-    console.log({ index });
     // Update the index
 
     setActiveIndex(index);
@@ -135,12 +133,13 @@ const BreakingNews = ({ newsList }) => {
 
   // Render Dot Indicators
   const renderDotIndicators = () => {
-    return carouselData.map((dot, index) => {
+    return breakingNews.map((dot, index) => {
       // if the active index === index
 
       if (activeIndex === index) {
         return (
           <View
+            key={dot.id}
             style={{
               backgroundColor: "red",
               height: 10,
@@ -153,7 +152,7 @@ const BreakingNews = ({ newsList }) => {
       } else {
         return (
           <View
-            key={index}
+            key={dot.id}
             style={{
               backgroundColor: "#262626",
               height: 10,
@@ -171,7 +170,7 @@ const BreakingNews = ({ newsList }) => {
     <View style={styles.container}>
       <Text style={styles.breakingNewsTitle}>Breaking News</Text>
       <FlatList
-        data={carouselData}
+        data={breakingNews}
         ref={flatlistRef}
         getItemLayout={getItemLayout}
         renderItem={renderItem}
@@ -201,6 +200,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   breakingNewsTitle: {
+    color: "#333",
     marginHorizontal: 20,
     fontSize: 18,
     fontWeight: "600",
