@@ -1,19 +1,7 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  ImageBackground,
-  StatusBar,
-} from "react-native";
+import { StyleSheet, View, ImageBackground, StatusBar } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import Animated, {
-  FadeInRight,
-  FadeInLeft,
-  FadeInDown,
-  FadeInUp,
-} from "react-native-reanimated";
+import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
 
 export default function SplashScreen() {
   const [isVisible, setIsVisible] = useState(true);
@@ -26,8 +14,8 @@ export default function SplashScreen() {
   useEffect(() => {
     setTimeout(() => {
       hideSplashScreen();
-      navigation.navigate("Tab");
-    }, 2000);
+      navigation.navigate("Onboarding");
+    }, 5000);
   }, []);
 
   const renderSplashScreen = () => {
@@ -35,7 +23,7 @@ export default function SplashScreen() {
       <View style={styles.MainContainer}>
         <StatusBar barStyle="light-content" />
         <ImageBackground
-          source={require("../assets/splash-image.jpg")}
+          source={require("../../assets/splash-image.jpg")}
           resizeMode="cover"
           style={styles.styleBackgroundImage}
         >

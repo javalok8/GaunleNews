@@ -8,7 +8,6 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
-import { duration } from "moment";
 
 export default function CheckBox({ label, checked, onPress }) {
   const rnAnimatedContainerStyle = useAnimatedStyle(() => {
@@ -59,7 +58,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    //color: "#FF4C4C",
     color: "black",
   },
   iconWrapper: {

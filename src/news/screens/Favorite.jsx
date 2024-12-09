@@ -22,7 +22,6 @@ export default function Favorite({ navigation }) {
       const res = JSON.parse(token);
       setIsLoading(true);
       if (res) {
-        console.log("==========Lokendra Bookmark News : ", res);
         let query_string = res.join(",");
         console.log("Lokendra Query_String is : ", query_string);
         const URL = `https://newsdata.io/api/1/news?apikey=pub_61159224d4587a387d6a2276b18050fcd1a0d&id=${query_string}`;
@@ -37,12 +36,11 @@ export default function Favorite({ navigation }) {
     });
   };
 
-  navigation.setOptions({
-    headerShown: true,
-    title: "Favorite",
-  });
-
   useEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      title: "Favorite",
+    });
     getBookmarkNews();
   }, [isFocused]);
 

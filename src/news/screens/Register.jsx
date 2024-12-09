@@ -1,6 +1,5 @@
-import React, { Component, useState } from "react";
+import React, { useState } from "react";
 import {
-  Button,
   Image,
   ImageBackground,
   StyleSheet,
@@ -21,10 +20,10 @@ import * as Haptics from "expo-haptics";
 //for api connection
 import axios from "axios";
 //for locally store key-value pair data
-import { saveData } from "../utils/storageUtils";
+import { saveData } from "../../utils/storageUtils";
 //for redux toolkit and userSlice
 import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../ReduxTool/userSlice";
+import { setUser } from "../../ReduxTool/userSlice";
 
 const Register = () => {
   const navigation = useNavigation();
@@ -166,7 +165,7 @@ const Register = () => {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
-          source={require("../assets/topVector.png")}
+          source={require("../../assets/topVector.png")}
           style={styles.topImageStyle}
         />
       </View>
@@ -303,7 +302,7 @@ const Register = () => {
       </View>
       <View style={styles.footerImageContainer}>
         <ImageBackground
-          source={require("../assets/buttomVector.png")}
+          source={require("../../assets/bottomVector.png")}
           style={styles.bottomImageStyle}
         />
       </View>

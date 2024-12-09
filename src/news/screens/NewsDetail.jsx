@@ -13,8 +13,10 @@ import Loading from "../components/Loading";
 import Moment from "moment";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
-export default function NewsDetail({ route, navigation }) {
+export default function NewsDetail({ route }) {
+  const navigation = useNavigation();
   const { top: safeTop } = useSafeAreaInsets();
   const { item } = route.params;
 
@@ -38,32 +40,6 @@ export default function NewsDetail({ route, navigation }) {
       console.log("Lokendra Error from URL: ", error);
     }
   };
-
-  // Dynamically set header options
-  navigation.setOptions({
-    headerShown: true,
-    headerLeft: () => (
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Ionicons name="arrow-back" size={22} />
-      </TouchableOpacity>
-    ),
-    headerRight: () => (
-      <TouchableOpacity
-        onPress={() => {
-          bookmark
-            ? removeBookmarkNews(news[0].article_id)
-            : bookmarkNews(news[0].article_id);
-        }}
-      >
-        <Ionicons
-          name={bookmark ? "heart" : "heart-outline"}
-          size={22}
-          color={bookmark ? "red" : "black"}
-        />
-      </TouchableOpacity>
-    ),
-    title: "",
-  });
 
   /**
    *
@@ -110,6 +86,32 @@ export default function NewsDetail({ route, navigation }) {
     });
     await AsyncStorage.setItem("bookmark", JSON.stringify(bookmarks));
   };
+
+  // Dynamically set header options
+  navigation.setOptions({
+    headerShown: true,
+    headerLeft: () => (
+      <TouchableOpacity onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={22} />
+      </TouchableOpacity>
+    ),
+    headerRight: () => (
+      <TouchableOpacity
+        onPress={() => {
+          bookmark
+            ? removeBookmarkNews(news[0].article_id)
+            : bookmarkNews(news[0].article_id);
+        }}
+      >
+        <Ionicons
+          name={bookmark ? "heart" : "heart-outline"}
+          size={22}
+          color={bookmark ? "red" : "black"}
+        />
+      </TouchableOpacity>
+    ),
+    title: "",
+  });
 
   useEffect(() => {
     if (!isLoading) {

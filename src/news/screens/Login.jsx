@@ -1,6 +1,5 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
-  Button,
   Image,
   ImageBackground,
   StyleSheet,
@@ -14,7 +13,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import IonIcons from "@expo/vector-icons/Ionicons";
-import { login } from "../ReduxTool/authSlice";
+import { login } from "../../ReduxTool/authSlice";
 import { LinearGradient } from "expo-linear-gradient";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -23,7 +22,7 @@ import * as Haptics from "expo-haptics";
 //for api connection
 import axios from "axios";
 //for locally store key-value pair data
-import { saveData } from "../utils/storageUtils";
+import { saveData } from "../../utils/storageUtils";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -64,7 +63,7 @@ const Login = () => {
   };
 
   const handleChange = (field, value) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setForm({ ...form, [field]: value });
     setErrors({ ...errors, [field]: "" }); // Clear error for field on edit
   };
@@ -89,7 +88,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const handleLoginRedux = () => {
     dispatch(login({ name: "lokendra24" }));
-    navigation.navigate("Home");
+    navigation.navigate("Tab");
   };
   /**
    *
@@ -119,8 +118,7 @@ const Login = () => {
         if (response.status === 201) {
           await saveData("email", email);
           await saveData("password", password);
-          Alert.alert("Logged In", "Logged In Successfully!");
-          navigation.navigate("Home");
+          navigation.navigate("Tab");
         } else {
           Alert.alert("Error", "Register Failed!");
         }
@@ -162,7 +160,7 @@ const Login = () => {
     <View style={styles.container}>
       <View style={styles.imageContainer}>
         <Image
-          source={require("../assets/topVector.png")}
+          source={require("../../assets/topVector.png")}
           style={styles.topImageStyle}
         />
       </View>
@@ -246,7 +244,7 @@ const Login = () => {
       </TouchableOpacity>
       <View style={styles.footerImageContainer}>
         <ImageBackground
-          source={require("../assets/buttomVector.png")}
+          source={require("../../assets/bottomVector.png")}
           style={styles.bottomImageStyle}
         />
       </View>

@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import SearchingBar from "../components/SearchingBar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CheckBox from "../components/CheckBox";
-import { useNewsCategories } from "../hooks/useNewsCategories";
-import { useNewsCountries } from "../hooks/useNewsCountries";
+import { useNewsCategories } from "../../hooks/useNewsCategories";
+import { useNewsCountries } from "../../hooks/useNewsCountries";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Discover({ route }) {

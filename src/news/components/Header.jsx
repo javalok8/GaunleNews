@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <View style={styles.container}>
       <View style={styles.styleInfo}>
-        <Image source={require("../assets/user.png")} style={styles.image} />
+        <Image source={require("../../assets/user.png")} style={styles.image} />
         <View style={{ gab: 10, marginLeft: 10 }}>
           <Text style={styles.welcomeStyle}>Welcome</Text>
           <Text style={styles.nameStyle}>Lokendra</Text>
@@ -30,7 +30,6 @@ const styles = StyleSheet.create({
     width: 50, // Adjust the size
     height: 50, // Must match width for a perfect circle
     borderRadius: 50, // Half of the width/height for a circle
-    // borderWidth: 3, // Optional: Adds a border
   },
   notificationIcon: {
     position: "absolute",

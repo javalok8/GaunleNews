@@ -1,9 +1,9 @@
 import { View, Text, StyleSheet, Button } from "react-native";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../ReduxTool/authSlice";
+import { logout } from "../../ReduxTool/authSlice";
 //for locally store key-value pair data
-import { saveData, getData, clearData } from "../utils/storageUtils";
+import { saveData, getData, clearData } from "../../utils/storageUtils";
 
 const Home = ({ navigation }) => {
   const user = useSelector((state) => state.auth);

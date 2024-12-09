@@ -2,11 +2,12 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  Touchable,
   TouchableOpacity,
   View,
 } from "react-native";
 import React, { useRef, useState } from "react";
+//for vibrate button
+import * as Haptics from "expo-haptics";
 import newsCategoryList from "../constants/Categories";
 
 export default function Categories({ onCategoryChanged }) {
@@ -15,6 +16,7 @@ export default function Categories({ onCategoryChanged }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const handleSelectCategory = (index) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     const selected = itemRef.current[index];
     setActiveIndex(index);
     selected?.measure((x) => {

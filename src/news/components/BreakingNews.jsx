@@ -20,7 +20,11 @@ const BreakingNews = ({ breakingNews }) => {
   const screenWidth = Dimensions.get("screen").width;
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // Auto Scroll
+  /**
+   *
+   * =========================== METHOD TO AUTO SLIDE SCROLL ===========================
+   *
+   */
   useEffect(() => {
     let interval = setInterval(() => {
       if (activeIndex === breakingNews.length - 1) {
@@ -38,60 +42,30 @@ const BreakingNews = ({ breakingNews }) => {
 
     return () => clearInterval(interval);
   });
+  /**
+   *
+   * =========================== END OF METHOD ===========================
+   *
+   */
 
   const getItemLayout = (data, index) => ({
     length: screenWidth,
     offset: screenWidth * index, // for first image - 300 * 0 = 0pixels, 300 * 1 = 300, 300*2 = 600
     index: index,
   });
-  // // Data for carousel
-  // const carouselData = [
-  //   {
-  //     id: "01",
-  //     image: require("../assets/images/1.jpg"),
-  //     title: "संसारको सबैभन्दा बुढो चरा, ७४ वर्षको उमेरमा पार्यो अण्डा",
-  //     sourceName: "ESPN",
-  //   },
-  //   {
-  //     id: "02",
-  //     image: require("../assets/images/2.jpg"),
-  //     title: "के राजीनामा दिँदैछन् एप्पलका सीईओले",
-  //     sourceName: "Narchyang",
-  //   },
-  //   {
-  //     id: "03",
-  //     image: require("../assets/images/3.jpg"),
-  //     title: "सोसल मिडियाको लत छ ? यसरी छुटाउनुहोस्” ",
-  //     sourceName: "Shikha",
-  //   },
-  //   {
-  //     id: "04",
-  //     image: require("../assets/images/4.jpg"),
-  //     title:
-  //       "‘पुष्पा २’ बन्यो भारत र विश्वभर सर्वाधिक ओपनिङ गर्ने भारतीय फिल्म ",
-  //     sourceName: "Histan",
-  //   },
-  //   {
-  //     id: "05",
-  //     image: require("../assets/images/5.jpg"),
-  //     title: "रङ नम्बर : कति मासु खान्छौं भगवान् ! ",
-  //     sourceName: "Doba",
-  //   },
-  //   {
-  //     id: "06",
-  //     image: require("../assets/images/6.jpg"),
-  //     title: "एनपीएलमा शतक हान्ने पहिलो खेलाडी बने आन्द्रेस” ",
-  //     sourceName: "Narchyang Lekha",
-  //   },
-  // ];
 
-  //  Display Images slider // UI
+  /**
+   *
+   *
+   * =========================== METHOD TO RENDER ITEM INSIDE FLATLIST ===========================
+   *
+   */
   const renderItem = ({ item, index }) => {
     return (
       <TouchableOpacity
         onPress={() => navigation.navigate("NewsDetail", { item })}
       >
-        <View key={item.article_id} style={styles.itemWrapper}>
+        <View key={index} style={styles.itemWrapper}>
           <Image
             source={{ uri: item.image_url }}
             style={{ height: 200, width: screenWidth, borderRadius: 20 }}
@@ -117,6 +91,12 @@ const BreakingNews = ({ breakingNews }) => {
       </TouchableOpacity>
     );
   };
+  /**
+   *
+   *
+   * =========================== END OF METHOD ===========================
+   *
+   */
 
   // Handle Scroll
   const handleScroll = (event) => {
@@ -139,7 +119,7 @@ const BreakingNews = ({ breakingNews }) => {
       if (activeIndex === index) {
         return (
           <View
-            key={dot.id}
+            key={index}
             style={{
               backgroundColor: "red",
               height: 10,
@@ -152,7 +132,7 @@ const BreakingNews = ({ breakingNews }) => {
       } else {
         return (
           <View
-            key={dot.id}
+            key={index}
             style={{
               backgroundColor: "#262626",
               height: 10,
@@ -174,7 +154,7 @@ const BreakingNews = ({ breakingNews }) => {
         ref={flatlistRef}
         getItemLayout={getItemLayout}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => index}
         horizontal={true}
         pagingEnabled={true}
         onScroll={handleScroll}

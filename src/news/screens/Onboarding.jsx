@@ -5,7 +5,7 @@ import IonIcons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 
 //for locally store key-value pair data
-import { saveData, getData, clearData } from "../utils/storageUtils";
+import { saveData, getData, clearData } from "../../utils/storageUtils";
 //for vibrate button
 import * as Haptics from "expo-haptics";
 
@@ -42,28 +42,28 @@ export default function Onboarding() {
       key: 1,
       title: "Title 1",
       text: "Description.\nSay something cool",
-      image: require("../assets/onboarding/doodle_reading.png"),
+      image: require("../../assets/onboarding/doodle_reading.png"),
       backgroundColor: "#59b2ab",
     },
     {
       key: 2,
       title: "Title 2",
       text: "Other cool stuff",
-      image: require("../assets/onboarding/frontal_home.png"),
+      image: require("../../assets/onboarding/frontal_home.png"),
       backgroundColor: "#febe29",
     },
     {
       key: 3,
       title: "Rocket guy",
       text: "I'm already out of descriptions\n\nLorem ipsum bla bla bla",
-      image: require("../assets/onboarding/Giant Phone.png"),
+      image: require("../../assets/onboarding/Giant Phone.png"),
       backgroundColor: "#22bcb5",
     },
     {
       key: 4,
       title: "लोकेन्द्र फगामी",
       text: "मेरो नाम लोकेन्द्र फगामी हो र म नारच्याङमा बस्छु\n\nमेरो नाम लोकेन्द्र फगामी हो र म नारच्याङमा बस्छु",
-      image: require("../assets/onboarding/stting_on_floor.png"),
+      image: require("../../assets/onboarding/stting_on_floor.png"),
       backgroundColor: "#22bcb5",
     },
   ];
@@ -133,7 +133,7 @@ export default function Onboarding() {
     if (isLocalData) {
       navigation.navigate("Tab");
     } else {
-      navigation.navigate("Tab");
+      navigation.navigate("Login");
     }
   };
 

@@ -1,22 +1,16 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import SplashScreen from "../screens/SplashScreen";
+import SplashScreen from "../news/screens/SplashScreen";
 import Tabs from "./Tabs";
-import Login from "../screens/Login";
-import Register from "../screens/Register";
-import Onboarding from "../screens/Onboarding";
-import NewsDetail from "../screens/NewsDetail";
-import CategoryList from "../screens/CategoryList";
-import About from "../screens/About";
+import Login from "../news/screens/Login";
+import Register from "../news/screens/Register";
+import Onboarding from "../news/screens/Onboarding";
+import NewsDetail from "../news/screens/NewsDetail";
 
 import AppUi from "../ReduxTool/AppUi";
-import { TouchableOpacity } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { useNavigation } from "@react-navigation/native";
-import SearchNews from "../screens/SearchNews";
+import SearchNews from "../news/screens/SearchNews";
 
 const AuthStack = () => {
-  const navigation = useNavigation();
   const Stack = createNativeStackNavigator();
 
   return (
@@ -30,22 +24,8 @@ const AuthStack = () => {
       <Stack.Screen name="Register" component={Register} />
       <Stack.Screen name="Onboarding" component={Onboarding} />
       <Stack.Screen name="NewsDetail" component={NewsDetail} />
-      <Stack.Screen name="CategoryList" component={CategoryList} />
-      <Stack.Screen name="About" component={About} />
-      <Stack.Screen
-        name="SearchNews"
-        component={SearchNews}
-        options={{
-          headerShown: true,
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons name="arrow-back" size={22} />
-            </TouchableOpacity>
-          ),
+      <Stack.Screen name="SearchNews" component={SearchNews} />
 
-          title: "Search",
-        }}
-      />
       <Stack.Screen name="AppUi" component={AppUi} />
     </Stack.Navigator>
   );

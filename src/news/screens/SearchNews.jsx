@@ -6,15 +6,14 @@ import {
   View,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import axios from "axios";
 import Loading from "../components/Loading";
 import { NewsItem } from "../components/NewsList";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function SearchNews({ route }) {
   const navigation = useNavigation();
-  const { top: safeTop } = useSafeAreaInsets();
 
   const { searchQuery, category, country } = route.params;
 
@@ -59,6 +58,18 @@ export default function SearchNews({ route }) {
   };
 
   useEffect(() => {
+    // Dynamically set header options
+    navigation.setOptions({
+      headerShown: true,
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={22} />
+        </TouchableOpacity>
+      ),
+      title: "Search",
+    });
+
+    //method to get searching news
     getSearchNews();
   }, []);
 
@@ -71,12 +82,12 @@ export default function SearchNews({ route }) {
           data={searchNews}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <TouchableOpacity
-              key={item.id}
+              key={index}
               onPress={() => navigation.navigate("NewsDetail", { item })}
             >
-              <NewsItem item={item} index={item.id} />
+              <NewsItem item={item} index={index} />
             </TouchableOpacity>
           )}
         />
