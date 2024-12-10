@@ -1,4 +1,4 @@
-import newsCountryList from "../constants/CountryList";
+import newsCountryList from "../news/constants/CountryList";
 import { useCallback, useState } from "react";
 
 export const useNewsCountries = () => {

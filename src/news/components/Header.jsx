@@ -6,7 +6,10 @@ export default function Header() {
   return (
     <View style={styles.container}>
       <View style={styles.styleInfo}>
-        <Image source={require("../../assets/user.png")} style={styles.image} />
+        <Image
+          source={require("../../assets/namaste.png")}
+          style={styles.image}
+        />
         <View style={{ gab: 10, marginLeft: 10 }}>
           <Text style={styles.welcomeStyle}>Welcome</Text>
           <Text style={styles.nameStyle}>Lokendra</Text>

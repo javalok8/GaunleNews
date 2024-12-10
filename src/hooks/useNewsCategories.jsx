@@ -1,4 +1,4 @@
-import newsCategoryList from "../constants/Categories";
+import newsCategoryList from "../news/constants/Categories";
 import { useCallback, useState } from "react";
 
 export const useNewsCategories = () => {

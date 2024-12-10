@@ -27,6 +27,8 @@ export default function NewsDetail({ route }) {
 
   const newsId = item.article_id;
 
+  const [id, setId] = useState(newsId);
+
   const getNews = async (newsId) => {
     try {
       const URL = `https://newsdata.io/api/1/news?apikey=pub_61159224d4587a387d6a2276b18050fcd1a0d&id=${newsId}`;
@@ -98,9 +100,8 @@ export default function NewsDetail({ route }) {
     headerRight: () => (
       <TouchableOpacity
         onPress={() => {
-          bookmark
-            ? removeBookmarkNews(news[0].article_id)
-            : bookmarkNews(news[0].article_id);
+          bookmark ? removeBookmarkNews(id) : bookmarkNews(id);
+          //: bookmarkNews(news[0].article_id);
         }}
       >
         <Ionicons
