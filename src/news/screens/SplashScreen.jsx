@@ -1,7 +1,14 @@
-import { StyleSheet, View, ImageBackground, StatusBar } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ImageBackground,
+  StatusBar,
+  Dimensions,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+import { Video } from "expo-av";
 
 export default function SplashScreen() {
   const [isVisible, setIsVisible] = useState(true);
@@ -16,34 +23,44 @@ export default function SplashScreen() {
       hideSplashScreen();
       navigation.navigate("HomeTabs");
       // navigation.navigate("Onboarding");
-    }, 1000);
+    }, 7000);
   }, []);
 
   const renderSplashScreen = () => {
     return (
       <View style={styles.MainContainer}>
         <StatusBar barStyle="light-content" />
-        <ImageBackground
+        <Video
+          // source={require("../../assets/videos/splash-video.mp4")} // Replace with your video URL or local file
+          source={{
+            uri: "https://cdn.pixabay.com/video/2024/09/14/231479_large.mp4",
+          }}
+          style={styles.video}
+          resizeMode="cover"
+          shouldPlay
+          isLooping={true}
+        />
+        {/* <ImageBackground
           source={require("../../assets/splash-image.jpg")}
           resizeMode="cover"
           style={styles.styleBackgroundImage}
-        >
-          <View style={styles.styleTextWrapper}>
-            <Animated.Text
-              entering={FadeInUp.delay(2000).duration(1000)}
-              style={styles.styleTitleText}
-            >
-              Gaunle News
-            </Animated.Text>
-            <Animated.Text
-              entering={FadeInDown.delay(3000).duration(1000)}
-              style={styles.styleDescriptionText}
-            >
-              Get breaking news and personalized updates direct to your feed
-              from Gaunle News
-            </Animated.Text>
-          </View>
-        </ImageBackground>
+        > */}
+        <View style={styles.overlay}>
+          <Animated.Text
+            entering={FadeInUp.delay(2000).duration(1000)}
+            style={styles.styleTitleText}
+          >
+            Gaunle News
+          </Animated.Text>
+          <Animated.Text
+            entering={FadeInDown.delay(3000).duration(1000)}
+            style={styles.styleDescriptionText}
+          >
+            Get breaking news and personalized updates direct to your feed from
+            Gaunle News
+          </Animated.Text>
+        </View>
+        {/* </ImageBackground> */}
       </View>
     );
   };
@@ -61,6 +78,13 @@ const styles = StyleSheet.create({
   },
   styleBackgroundImage: {
     flex: 1,
+  },
+  overlay: {
+    flex: 1,
+    justifyContent: "center", // Centers text vertically
+    alignItems: "center", // Centers text horizontally
+    paddingHorizontal: 30,
+    backgroundColor: "rgba(0, 0, 0, 0.4)", // Adds a semi-transparent background for better text visibility
   },
   styleTextWrapper: {
     flex: 1,
@@ -86,5 +110,12 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
     lineHeight: 40,
     textAlign: "center",
+  },
+  video: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: Dimensions.get("screen").width,
+    height: Dimensions.get("screen").height,
   },
 });
