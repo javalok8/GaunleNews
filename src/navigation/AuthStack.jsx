@@ -10,6 +10,10 @@ import NewsDetail from "../news/screens/NewsDetail";
 import AppUi from "../ReduxTool/AppUi";
 import SearchNews from "../news/screens/SearchNews";
 
+import HomeTabs from "./HomeTabs";
+import HomeDetailScreen from "../ghar/screens/HomeDetailScreen";
+import ReviewScreen from "../ghar/screens/ReviewScreen";
+
 const AuthStack = () => {
   const Stack = createNativeStackNavigator();
 
@@ -18,6 +22,7 @@ const AuthStack = () => {
       screenOptions={{ headerShown: false }}
       initialRouteName={"SplashScreen"}
     >
+      {/* news navigation  */}
       <Stack.Screen name="SplashScreen" component={SplashScreen} />
       <Stack.Screen name="Tab" component={Tabs} />
       <Stack.Screen name="Login" component={Login} />
@@ -27,6 +32,11 @@ const AuthStack = () => {
       <Stack.Screen name="SearchNews" component={SearchNews} />
 
       <Stack.Screen name="AppUi" component={AppUi} />
+      <Stack.Screen name="HomeTabs" component={HomeTabs} />
+      <Stack.Screen name="HomeDetailScreen" component={HomeDetailScreen} />
+      <Stack.Screen name="ReviewScreen" component={ReviewScreen} />
+
+      {/* Home Stay navigation  */}
     </Stack.Navigator>
   );
 };
