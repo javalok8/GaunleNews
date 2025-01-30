@@ -131,7 +131,8 @@ export default function Onboarding() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     //get credentials from local storage
     if (isLocalData) {
-      navigation.navigate("Tab");
+      // navigation.navigate("Tab");
+      navigation.navigate("Login");
     } else {
       navigation.navigate("Login");
     }

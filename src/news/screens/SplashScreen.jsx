@@ -21,8 +21,8 @@ export default function SplashScreen() {
   useEffect(() => {
     setTimeout(() => {
       hideSplashScreen();
-      navigation.navigate("HomeTabs");
-      // navigation.navigate("Onboarding");
+      // navigation.navigate("HomeTabs");
+      navigation.navigate("Onboarding");
     }, 7000);
   }, []);
 
@@ -50,14 +50,16 @@ export default function SplashScreen() {
             entering={FadeInUp.delay(2000).duration(1000)}
             style={styles.styleTitleText}
           >
-            Gaunle News
+            गाउँले खबर
           </Animated.Text>
           <Animated.Text
             entering={FadeInDown.delay(3000).duration(1000)}
             style={styles.styleDescriptionText}
           >
-            Get breaking news and personalized updates direct to your feed from
-            Gaunle News
+            ग्रामीण समाचार बाट तपाईंको फिडमा सीधा ताजा समाचार र व्यक्तिगत
+            अद्यावधिकहरू प्राप्त गर्नुहोस्
+            {/* Get breaking news and personalized updates direct to your feed from
+            Gaunle News */}
           </Animated.Text>
         </View>
         {/* </ImageBackground> */}

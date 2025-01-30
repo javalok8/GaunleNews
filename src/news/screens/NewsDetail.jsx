@@ -14,8 +14,14 @@ import Moment from "moment";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import { useFonts } from "expo-font";
 
 export default function NewsDetail({ route }) {
+  const [fontsLoaded, fontError] = useFonts({
+    outfit: require("../../assets/fonts/Outfit-Regular.ttf"),
+    "outfit-medium": require("../../assets/fonts/Outfit-Medium.ttf"),
+    "outfit-bold": require("../../assets/fonts/Outfit-Bold.ttf"),
+  });
   const navigation = useNavigation();
   const { top: safeTop } = useSafeAreaInsets();
   const { item } = route.params;
@@ -144,7 +150,9 @@ export default function NewsDetail({ route }) {
             source={{ uri: news[0].image_url }}
             style={styles.imageStyle}
           />
-          <Text style={styles.description}>{news[0].description}</Text>
+          <Text style={{ ...styles.description, fontFamily: "outfit" }}>
+            {news[0].description}
+          </Text>
         </ScrollView>
       )}
     </>

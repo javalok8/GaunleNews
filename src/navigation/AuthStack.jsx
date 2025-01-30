@@ -13,6 +13,7 @@ import SearchNews from "../news/screens/SearchNews";
 import HomeTabs from "./HomeTabs";
 import HomeDetailScreen from "../ghar/screens/HomeDetailScreen";
 import ReviewScreen from "../ghar/screens/ReviewScreen";
+import GtakTabs from "./GtakTabs";
 
 const AuthStack = () => {
   const Stack = createNativeStackNavigator();
@@ -31,12 +32,14 @@ const AuthStack = () => {
       <Stack.Screen name="NewsDetail" component={NewsDetail} />
       <Stack.Screen name="SearchNews" component={SearchNews} />
 
+      {/* news navigation  */}
       <Stack.Screen name="AppUi" component={AppUi} />
       <Stack.Screen name="HomeTabs" component={HomeTabs} />
       <Stack.Screen name="HomeDetailScreen" component={HomeDetailScreen} />
       <Stack.Screen name="ReviewScreen" component={ReviewScreen} />
 
-      {/* Home Stay navigation  */}
+      {/* Gtak navigation  */}
+      <Stack.Screen name="GtakTabs" component={GtakTabs} />
     </Stack.Navigator>
   );
 };

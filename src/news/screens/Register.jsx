@@ -9,33 +9,33 @@ import {
   View,
   Alert,
   Pressable,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import IonIcons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
-import Entypo from "@expo/vector-icons/Entypo";
-import AntDesign from "@expo/vector-icons/AntDesign";
-//for vibrate button
-import * as Haptics from "expo-haptics";
-//for api connection
+import * as ImagePicker from "expo-image-picker"; // Import Image Picker
 import axios from "axios";
-//for locally store key-value pair data
-import { saveData } from "../../utils/storageUtils";
-//for redux toolkit and userSlice
-import { useDispatch, useSelector } from "react-redux";
-import { setUser } from "../../ReduxTool/userSlice";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as Haptics from "expo-haptics";
+import { useFonts } from "expo-font";
+import { FontAwesome } from "@expo/vector-icons";
 
 const Register = () => {
+  const [fontsLoaded, fontError] = useFonts({
+    outfit: require("../../assets/fonts/Outfit-Regular.ttf"),
+    "outfit-medium": require("../../assets/fonts/Outfit-Medium.ttf"),
+    "outfit-bold": require("../../assets/fonts/Outfit-Bold.ttf"),
+  });
+
+  // if (!fontsLoaded && !fontError) {
+  //   return null;
+  // }
+
+  const { top: safeTop } = useSafeAreaInsets();
   const navigation = useNavigation();
 
-  //for backend error message
-  const [msg, setMsg] = useState("");
-
-  /**
-   *
-   * ======================= CODE FOR VALIDATION FIELDS ================================
-   *
-   */
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -43,19 +43,29 @@ const Register = () => {
     phone: "",
   });
 
+  const [image, setImage] = useState(null); // Store selected image
   const [errors, setErrors] = useState({});
+
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const toggleSecureTextEntry = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    setSecureTextEntry(!secureTextEntry);
+  };
 
   const validate = () => {
     let valid = true;
     let newErrors = {};
 
-    // Name Validation
+    if (!image) {
+      newErrors.image = "Profile picture is required";
+      valid = false;
+    }
+
     if (!form.name.trim()) {
       newErrors.name = "Username is required";
       valid = false;
     }
 
-    // Email Validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!form.email) {
       newErrors.email = "Email is required";
@@ -65,21 +75,13 @@ const Register = () => {
       valid = false;
     }
 
-    // Password Validation
-    if (!form.password) {
-      newErrors.password = "Password is required";
-      valid = false;
-    } else if (form.password.length < 6) {
+    if (!form.password || form.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
       valid = false;
     }
 
-    // Phone Number Validation
     const phoneRegex = /^[0-9]{10}$/;
-    if (!form.phone) {
-      newErrors.phone = "Phone number is required";
-      valid = false;
-    } else if (!phoneRegex.test(form.phone)) {
+    if (!form.phone || !phoneRegex.test(form.phone)) {
       newErrors.phone = "Enter a valid 10-digit phone number";
       valid = false;
     }
@@ -88,59 +90,48 @@ const Register = () => {
     return valid;
   };
 
-  const handleChange = (field, value) => {
+  const pickImage = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setForm({ ...form, [field]: value });
-    setErrors({ ...errors, [field]: "" }); // Clear error for field on edit
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+      setErrors({ ...errors, image: "" }); // Clear error if selected
+    }
   };
 
-  /**
-   * ============================VALIDATION CODE ENDED HERE==============================
-   */
-
-  const backToLogin = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    navigation.navigate("Login");
-  };
-
-  /**
-   * ============================ CODE FOR SOCIAL MEDIA CONNECTION ==============================
-   */
-  const handleSocialMediaConnection = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    Alert.alert("Social Media Connection", "Social Media Connection!");
-  };
-  /**
-   *
-   * ============================ CODE FOR SOCIAL MEDIA CONNECTION ENDED ==============================
-   */
-
-  /**
-   *
-   * =================================CODE FOR API CONNECTION================================
-   *
-   */
-  handleRegister = async () => {
+  const handleRegister = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     if (validate()) {
-      name = form.name;
-      email = form.email;
-      password = form.password;
-      phoneNumber = form.phone;
       try {
+        let formData = new FormData();
+        formData.append("name", form.name);
+        formData.append("email", form.email);
+        formData.append("password", form.password);
+        formData.append("phoneNumber", form.phone);
+
+        if (image) {
+          formData.append("profileImage", {
+            uri: image,
+            name: "profile.jpg",
+            type: "image/jpeg",
+          });
+        }
+
         const response = await axios.post(
           "http://192.168.1.74:3000/api/users/register",
+          formData,
           {
-            name,
-            email,
-            password,
-            phoneNumber,
+            headers: { "Content-Type": "multipart/form-data" },
           }
         );
-        console.log("====response data====" + response.status);
+
         if (response.status === 201) {
-          await saveData("email", email);
-          await saveData("password", password);
           Alert.alert("Success", "Registered Successfully!");
           navigation.navigate("Login");
         } else {
@@ -149,304 +140,200 @@ const Register = () => {
       } catch (error) {
         console.error(error);
       }
-    } else if (response.status === 401) {
-      Alert.alert(" Error", " User already exists ");
-    } else if (response.status === 402) {
-      Alert.alert(" Error", " Invalid user data ");
     }
   };
-  /**
-   *
-   * =================================CODE FOR API CONNECTION ENDED================================
-   *
-   */
 
   return (
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={require("../../assets/topVector.png")}
-          style={styles.topImageStyle}
-        />
-      </View>
-
-      <View>
-        <Text style={styles.registerTextHeader}>Create Account</Text>
-      </View>
-      <View style={styles.inputContainer}>
-        <IonIcons
-          name="person"
-          size={24}
-          color={"#9a9a9a"}
-          style={styles.inputIcon}
-        />
-        <TextInput
-          style={[styles.inputStyle, errors.name && styles.errorBorder]}
-          value={form.name}
-          placeholder="Username"
-          onChangeText={(value) => handleChange("name", value)}
-        />
-        {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
-      </View>
-      <View style={styles.inputContainer}>
-        <Entypo
-          name="lock"
-          size={24}
-          color={"#9a9a9a"}
-          style={styles.inputIcon}
-        />
-        <TextInput
-          style={[styles.inputStyle, errors.password && styles.errorBorder]}
-          value={form.password}
-          placeholder="Password"
-          onChangeText={(value) => handleChange("password", value)}
-          secureTextEntry
-          autoCapitalize="none"
-        />
-        {errors.password && (
-          <Text style={styles.errorText}>{errors.password}</Text>
-        )}
-      </View>
-      <View style={styles.inputContainer}>
-        <Entypo
-          name="email"
-          size={24}
-          color={"#9a9a9a"}
-          style={styles.inputIcon}
-        />
-        <TextInput
-          style={[styles.inputStyle, errors.email && styles.errorBorder]}
-          value={form.email}
-          placeholder="Email"
-          onChangeText={(value) => handleChange("email", value)}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-      </View>
-      <View style={styles.inputContainer}>
-        <IonIcons
-          name="call"
-          size={24}
-          color={"#9a9a9a"}
-          style={styles.inputIcon}
-        />
-        <TextInput
-          style={[styles.inputStyle, errors.phone && styles.errorBorder]}
-          value={form.phone}
-          placeholder="Mobile"
-          keyboardType="numeric"
-          maxLength={10}
-          onChangeText={(value) => handleChange("phone", value)}
-        />
-        {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
-      </View>
-
-      <View style={styles.registerButtonContainer}>
-        <View style={styles.backButtonContainer}>
-          <Pressable onPress={backToLogin}>
-            <LinearGradient
-              // Button Linear Gradient
-              colors={["#f97794", "#623aa2"]}
-              style={styles.buttonLinearGradientBack}
-            >
-              <IonIcons name="arrow-back" size={24} color={"white"} />
-            </LinearGradient>
-          </Pressable>
-          <Text style={styles.registerText}>Back</Text>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={[styles.container, { paddingTop: safeTop }]}>
+        {/* Top Image */}
+        <View>
+          <Image
+            source={require("../../assets/topVector.png")}
+            style={styles.topImageStyle}
+          />
         </View>
-        <View style={styles.createButtonContainer}>
-          <Text style={styles.registerText}>Create</Text>
-          <Pressable onPress={handleRegister}>
-            <LinearGradient
-              // Button Linear Gradient
-              colors={["#f97794", "#623aa2"]}
-              style={styles.buttonLinearGradient}
-            >
-              <IonIcons name="arrow-forward" size={24} color={"white"} />
-            </LinearGradient>
-          </Pressable>
+
+        <View style={styles.imagePickerContainer}>
+          <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
+            {image ? (
+              <Image source={{ uri: image }} style={styles.profileImage} />
+            ) : (
+              <IonIcons name="camera" size={40} color="#ccc" />
+            )}
+          </TouchableOpacity>
+          {errors.image && <Text style={styles.errorText}>{errors.image}</Text>}
         </View>
-      </View>
-      <View style={styles.footerSocialMediaContainer}>
-        <Text style={styles.signUpFooterText}>
-          Or create account using social media
+
+        <Text
+          style={[
+            styles.registerTextHeader,
+            { fontFamily: "outfit-bold", paddingBottom: 10 },
+          ]}
+        >
+          Create Account
         </Text>
 
-        <View style={styles.socialMediaContainer}>
-          <TouchableOpacity onPress={handleSocialMediaConnection}>
-            <Entypo
-              name="facebook-with-circle"
-              size={30}
+        {/* Input Fields */}
+        <View style={styles.inputContainer}>
+          <IonIcons name="person" size={24} color={"#9a9a9a"} />
+          <TextInput
+            style={styles.inputStyle}
+            value={form.name}
+            placeholder="Username"
+            onChangeText={(value) => setForm({ ...form, name: value })}
+          />
+          {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+        </View>
+
+        <View style={styles.inputContainer}>
+          <IonIcons name="mail" size={24} color={"#9a9a9a"} />
+          <TextInput
+            style={styles.inputStyle}
+            value={form.email}
+            placeholder="Email"
+            keyboardType="email-address"
+            onChangeText={(value) => setForm({ ...form, email: value })}
+          />
+          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+        </View>
+
+        <View style={styles.inputContainer}>
+          <IonIcons name="lock-closed" size={24} color={"#9a9a9a"} />
+          <TextInput
+            style={styles.inputStyle}
+            value={form.password}
+            placeholder="Password"
+            secureTextEntry={secureTextEntry}
+            onChangeText={(value) => setForm({ ...form, password: value })}
+          />
+          {errors.password && (
+            <Text style={styles.errorText}>{errors.password}</Text>
+          )}
+          <TouchableOpacity onPress={toggleSecureTextEntry}>
+            <FontAwesome
+              name={secureTextEntry ? "eye-slash" : "eye"}
+              size={24}
               color="#9a9a9a"
-              style={styles.socialIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleSocialMediaConnection}>
-            <AntDesign
-              name="google"
-              size={30}
-              color="#9a9a9a"
-              style={styles.socialIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleSocialMediaConnection}>
-            <Entypo
-              name="twitter-with-circle"
-              size={30}
-              color="#9a9a9a"
-              style={styles.socialIcon}
+              style={styles.eyeIcon}
             />
           </TouchableOpacity>
         </View>
+
+        <View style={styles.inputContainer}>
+          <IonIcons name="call" size={24} color={"#9a9a9a"} />
+          <TextInput
+            style={styles.inputStyle}
+            value={form.phone}
+            placeholder="Phone Number"
+            keyboardType="numeric"
+            onChangeText={(value) => setForm({ ...form, phone: value })}
+          />
+          {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 10,
+            justifyContent: "space-between",
+            borderRadius: 25,
+            padding: 10,
+          }}
+        >
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={() => navigation.navigate("Login")}
+          >
+            <LinearGradient
+              colors={["#f97794", "#623aa2"]}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.registerButtonText}> Login</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={handleRegister}
+          >
+            <LinearGradient
+              colors={["#f97794", "#623aa2"]}
+              style={styles.buttonGradient}
+            >
+              <Text style={styles.registerButtonText}>Register</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+
+        {/* Bottom Image */}
+        <View style={styles.footerImageContainer}>
+          <ImageBackground
+            source={require("../../assets/bottomVector.png")}
+            style={styles.bottomImageStyle}
+          />
+        </View>
       </View>
-      <View style={styles.footerImageContainer}>
-        <ImageBackground
-          source={require("../../assets/bottomVector.png")}
-          style={styles.bottomImageStyle}
-        />
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5f5",
-    position: "relative",
+  container: { flex: 1, backgroundColor: "#f5f5f5" },
+  imageContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+    shadowColor: "#000", // Shadow color
+    shadowOffset: { width: 0, height: 2 }, // Shadow position
+    shadowOpacity: 0.3, // Shadow opacity
+    shadowRadius: 5, // Shadow blur
+    elevation: 5, // For Android shadow
   },
-  imageContainer: {},
   topImageStyle: {
     width: "100%",
     height: 130,
-  },
-
-  registerTextHeader: {
-    fontSize: 20,
-    textAlign: "center",
-    color: "#262626",
-    marginBottom: 30,
-    fontWeight: "bold",
-  },
-  textLogoContainer: {},
-  textLogoStyle: {
-    fontSize: 70,
-    fontWeight: "700",
-    textAlign: "center",
-    color: "#262626",
-  },
-  createAccountText: {
-    fontSize: 30,
-    textAlign: "center",
-    color: "#262626",
-    marginButtom: 30,
-    fontWeight: "bold",
-  },
-  inputContainer: {
-    backgroundColor: "white",
-    flexDirection: "row",
-    borderRadius: 20,
-    marginHorizontal: 40,
-    elevation: 10,
-    marginVertical: 20,
-    alignItems: "center",
-    height: 50,
-  },
-  inputStyle: {
-    flex: 1,
-  },
-  inputIcon: {
-    marginLeft: 15,
-    marginRight: 5,
-  },
-
-  inputPassStyle: {
-    flex: 1,
-  },
-  inputPassIcon: {
-    marginLeft: 15,
-    marginRight: 5,
-  },
-  forgotPassText: {
-    fontSize: 15,
-    textAlign: "right",
-    color: "#BEBEBE",
-    width: "30%",
-  },
-  registerButtonContainer: {
-    flexDirection: "row",
-    marginTop: 40,
-    width: "90%",
-    justifyContent: "space-between",
-  },
-  registerText: {
-    marginTop: 5,
-    color: "#262626",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  buttonLinearGradient: {
-    height: 34,
-    width: 56,
-    borderRadius: 17,
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 10,
-  },
-  buttonLinearGradientBack: {
-    height: 34,
-    width: 56,
-    borderRadius: 17,
-    alignItems: "center",
-    justifyContent: "center",
-    marginHorizontal: 10,
-  },
-  signUpFooterText: {
-    fontSize: 16,
-    textAlign: "center",
-    color: "#262626",
-    marginTop: 120,
+    resizeMode: "cover", // Use 'cover' to make the image fill width and height
+    borderRadius: 10, // Optional, to give rounded corners to the top image
   },
   footerImageContainer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
+    alignItems: "center",
+    marginTop: 150,
   },
   bottomImageStyle: {
-    width: "500",
-    height: 150,
+    width: "100%",
+    height: 200, // Adjust this value based on your design
+    resizeMode: "cover", // Ensure the image covers the area
+    borderTopLeftRadius: 15, // Optional, for rounded corners
+    borderTopRightRadius: 15, // Optional, for rounded corners
   },
-  footerSocialMediaContainer: {
-    marginTop: 5,
-  },
-  socialMediaContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  socialIcon: {
-    backgroundColor: "white",
-    elevation: 10,
-    margin: 10,
-    padding: 10,
+  imagePickerContainer: { alignItems: "center", marginBottom: 20 },
+  imagePicker: {
+    width: 100,
+    height: 100,
     borderRadius: 50,
+    backgroundColor: "#e1e1e1",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
   },
-  backButtonContainer: {
+  profileImage: { width: "100%", height: "100%" },
+  inputContainer: {
     flexDirection: "row",
-    marginLeft: 30,
+    alignItems: "center",
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
   },
-  createButtonContainer: {
-    flexDirection: "row",
+  inputStyle: { flex: 1, marginLeft: 10 },
+  errorText: { color: "red", fontSize: 12, textAlign: "center" },
+  registerButton: { marginTop: 20, alignSelf: "center" },
+  buttonGradient: {
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    width: 200,
   },
-  errorBorder: {
-    borderColor: "red",
-  },
-  errorText: {
-    color: "red",
-    marginRight: 10,
-    fontSize: 12,
-  },
+  registerButtonText: { color: "white", fontSize: 16, fontWeight: "bold" },
 });
 
 export default Register;
