@@ -21,6 +21,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import { useFonts } from "expo-font";
 import { FontAwesome } from "@expo/vector-icons";
+import Loading from "../components/Loading";
 
 const Register = () => {
   const [fontsLoaded, fontError] = useFonts({
@@ -41,10 +42,13 @@ const Register = () => {
     email: "",
     password: "",
     phone: "",
+    adminType: "UserLocal",
   });
 
   const [image, setImage] = useState(null); // Store selected image
   const [errors, setErrors] = useState({});
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const toggleSecureTextEntry = () => {
@@ -108,15 +112,17 @@ const Register = () => {
   const handleRegister = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     if (validate()) {
+      setIsLoading(true);
       try {
         let formData = new FormData();
-        formData.append("name", form.name);
+        formData.append("villageName", form.name);
         formData.append("email", form.email);
         formData.append("password", form.password);
         formData.append("phoneNumber", form.phone);
+        formData.append("adminType", form.adminType);
 
         if (image) {
-          formData.append("profileImage", {
+          formData.append("villageImage", {
             uri: image,
             name: "profile.jpg",
             type: "image/jpeg",
@@ -124,7 +130,7 @@ const Register = () => {
         }
 
         const response = await axios.post(
-          "http://192.168.1.74:3000/api/users/register",
+          "http://192.168.1.113:5000/api/users/registerAdminUser",
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -132,13 +138,35 @@ const Register = () => {
         );
 
         if (response.status === 201) {
+          setIsLoading(false);
           Alert.alert("Success", "Registered Successfully!");
           navigation.navigate("Login");
         } else {
-          Alert.alert("Error", "Register Failed!");
+          setIsLoading(false);
+          Alert.alert("Error", response.data.msg || "Something went wrong");
+          // If the email already exists, show specific error
+
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            email: "Email is already taken",
+          }));
         }
       } catch (error) {
         console.error(error);
+        setIsLoading(false);
+        if (error.response) {
+          // If error has response from backend (status code not 2xx)
+          Alert.alert(
+            "Error",
+            error.response.data.msg || "Something went wrong"
+          );
+        } else if (error.request) {
+          // If no response from server
+          Alert.alert("Error", "Network error. Please try again.");
+        } else {
+          // Any other error
+          Alert.alert("Error", error.message || "An unexpected error occurred");
+        }
       }
     }
   };
@@ -241,28 +269,34 @@ const Register = () => {
             padding: 10,
           }}
         >
-          <TouchableOpacity
-            style={styles.registerButton}
-            onPress={() => navigation.navigate("Login")}
-          >
-            <LinearGradient
-              colors={["#f97794", "#623aa2"]}
-              style={styles.buttonGradient}
-            >
-              <Text style={styles.registerButtonText}> Login</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.registerButton}
-            onPress={handleRegister}
-          >
-            <LinearGradient
-              colors={["#f97794", "#623aa2"]}
-              style={styles.buttonGradient}
-            >
-              <Text style={styles.registerButtonText}>Register</Text>
-            </LinearGradient>
-          </TouchableOpacity>
+          {isLoading ? (
+            <Loading size={"large"} color="black" />
+          ) : (
+            <>
+              <TouchableOpacity
+                style={styles.registerButton}
+                onPress={() => navigation.navigate("Login")}
+              >
+                <LinearGradient
+                  colors={["#f97794", "#623aa2"]}
+                  style={styles.buttonGradient}
+                >
+                  <Text style={styles.registerButtonText}> Login</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.registerButton}
+                onPress={handleRegister}
+              >
+                <LinearGradient
+                  colors={["#f97794", "#623aa2"]}
+                  style={styles.buttonGradient}
+                >
+                  <Text style={styles.registerButtonText}>Register</Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
 
         {/* Bottom Image */}

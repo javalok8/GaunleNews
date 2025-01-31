@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     justifyContent: "center", // Centers text vertically
     alignItems: "center", // Centers text horizontally
     paddingHorizontal: 30,
-    backgroundColor: "rgba(0, 0, 0, 0.4)", // Adds a semi-transparent background for better text visibility
+    // backgroundColor: "rgba(0, 0, 0, 0.4)", // Adds a semi-transparent background for better text visibility
   },
   styleTextWrapper: {
     flex: 1,

@@ -20,6 +20,7 @@ import { saveData } from "../../utils/storageUtils"; // Assuming this is the fil
 import axios from "axios";
 import { FontAwesome } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
+import Loading from "../components/Loading";
 
 const Login = () => {
   const [fontsLoaded, fontError] = useFonts({
@@ -37,6 +38,8 @@ const Login = () => {
   });
 
   const [errors, setErrors] = useState({});
+
+  const [isLoading, setIsLoading] = useState(false);
 
   //for toogle password eye icon
   const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -75,21 +78,42 @@ const Login = () => {
   const handleLoginApi = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     if (validate()) {
+      setIsLoading(true);
       const { email, password } = form;
       try {
         const response = await axios.post(
-          "http://192.168.1.74:3000/api/users/login",
-          { email, password }
+          "http://192.168.1.113:5000/api/users/loginAdminUser",
+          {
+            email,
+            password,
+          }
         );
+
         if (response.status === 201) {
+          setIsLoading(false);
           await saveData("email", email);
           await saveData("password", password);
           navigation.navigate("Tab");
         } else {
-          Alert.alert("Error", "Login Failed!");
+          setIsLoading(false);
+          Alert.alert("Error", response.data.msg || "Something went wrong");
         }
       } catch (error) {
         console.error(error);
+        setIsLoading(false);
+        if (error.response) {
+          // If error has response from backend (status code not 2xx)
+          Alert.alert(
+            "Error",
+            error.response.data.msg || "Something went wrong"
+          );
+        } else if (error.request) {
+          // If no response from server
+          Alert.alert("Error", "Network error. Please try again.");
+        } else {
+          // Any other error
+          Alert.alert("Error", error.message || "An unexpected error occurred");
+        }
       }
     }
   };
@@ -121,15 +145,12 @@ const Login = () => {
         </View>
 
         {/* Logo */}
-        {/* <Text style={[styles.textLogoStyle, { fontFamily: "outfit-regular" }]}>
-        गाउँले
-      </Text> */}
-
-        <Text
-          style={[styles.signInTextHeader, { fontFamily: "outfit-medium" }]}
-        >
-          Sign in to Your Account
-        </Text>
+        <View style={styles.logoContainer}>
+          <Image
+            source={require("../../assets/logo.png")} // Replace with your actual logo path
+            style={styles.logoStyle}
+          />
+        </View>
 
         {/* Input Fields */}
         <View style={styles.inputContainer}>
@@ -140,6 +161,7 @@ const Login = () => {
             placeholder="Email"
             onChangeText={(value) => handleChange("email", value)}
             keyboardType="email-address"
+            autoFocus={true}
           />
           {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
         </View>
@@ -167,27 +189,39 @@ const Login = () => {
         </View>
 
         {/* Forgot Password */}
-        <Pressable onPress={handleForgotPassword}>
-          <Text style={styles.forgotPassText}>Forgot Your Password?</Text>
-        </Pressable>
+        <View style={styles.forgotPasswordContainer}>
+          <Text></Text>
+          <Pressable onPress={handleForgotPassword} style={styles.pressable}>
+            <Text style={styles.forgotPassText}>Forgot Your Password?</Text>
+          </Pressable>
+        </View>
 
-        {/* Sign In Button */}
-        <TouchableOpacity style={styles.signInButton} onPress={handleLoginApi}>
-          <LinearGradient
-            colors={["#f97794", "#623aa2"]}
-            style={styles.buttonGradient}
-          >
-            <Text style={styles.buttonText}>Sign In</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        {isLoading ? (
+          <Loading size={"large"} color="black" />
+        ) : (
+          <>
+            {/* Sign In Button */}
+            <TouchableOpacity
+              style={styles.signInButton}
+              onPress={handleLoginApi}
+            >
+              <LinearGradient
+                colors={["#f97794", "#623aa2"]}
+                style={styles.buttonGradient}
+              >
+                <Text style={styles.buttonText}>Login</Text>
+              </LinearGradient>
+            </TouchableOpacity>
 
-        {/* Register Link */}
-        <TouchableOpacity onPress={handleRegister}>
-          <Text style={styles.signUpFooterText}>
-            Don't have an account?
-            <Text style={styles.createAccountText}> Create</Text>
-          </Text>
-        </TouchableOpacity>
+            {/* Register Link */}
+            <TouchableOpacity onPress={handleRegister}>
+              <Text style={styles.signUpFooterText}>
+                Don't have an account?
+                <Text style={styles.createAccountText}> Create</Text>
+              </Text>
+            </TouchableOpacity>
+          </>
+        )}
 
         {/* Footer Image */}
         <View style={styles.footerImageContainer}>
@@ -212,6 +246,16 @@ const styles = StyleSheet.create({
     height: 130,
     resizeMode: "cover",
     borderRadius: 10,
+  },
+  logoContainer: {
+    alignItems: "center",
+    marginVertical: 50, // Adjust spacing
+  },
+  logoStyle: {
+    width: 100, // Adjust size as needed
+    height: 100,
+    borderRadius: 50, // Makes it circular
+    resizeMode: "contain",
   },
   textLogoStyle: {
     fontSize: 60,
@@ -269,11 +313,11 @@ const styles = StyleSheet.create({
   },
   footerImageContainer: {
     alignItems: "center",
-    marginTop: 200,
+    marginTop: 140,
   },
   bottomImageStyle: {
     width: "100%",
-    height: 150,
+    height: 160,
     resizeMode: "cover",
   },
   errorBorder: { borderColor: "red" },
@@ -281,6 +325,21 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 12,
     textAlign: "center",
+  },
+  forgotPasswordContainer: {
+    // Adjust the container to allow the Pressable to be clickable
+    paddingRight: 0,
+    justifyContent: "space-between",
+    flexDirection: "row",
+  },
+  pressable: {
+    // Add padding or a border to make the button more interactive
+    padding: 10,
+    borderRadius: 5,
+  },
+  forgotPassText: {
+    color: "blue",
+    textDecorationLine: "underline",
   },
 });
 
