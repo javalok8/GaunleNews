@@ -22,7 +22,7 @@ export default function SplashScreen() {
     setTimeout(() => {
       hideSplashScreen();
       // navigation.navigate("HomeTabs");
-      navigation.navigate("Onboarding");
+      navigation.navigate("GtakTabs");
     }, 7000);
   }, []);
 

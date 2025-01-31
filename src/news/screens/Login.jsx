@@ -93,7 +93,7 @@ const Login = () => {
           setIsLoading(false);
           await saveData("email", email);
           await saveData("password", password);
-          navigation.navigate("Tab");
+          navigation.navigate("GtakTabs");
         } else {
           setIsLoading(false);
           Alert.alert("Error", response.data.msg || "Something went wrong");

@@ -14,6 +14,7 @@ import HomeTabs from "./HomeTabs";
 import HomeDetailScreen from "../ghar/screens/HomeDetailScreen";
 import ReviewScreen from "../ghar/screens/ReviewScreen";
 import GtakTabs from "./GtakTabs";
+import PreviewScreen from "../gtak/screens/PreviewScreen";
 
 const AuthStack = () => {
   const Stack = createNativeStackNavigator();
@@ -40,6 +41,7 @@ const AuthStack = () => {
 
       {/* Gtak navigation  */}
       <Stack.Screen name="GtakTabs" component={GtakTabs} />
+      <Stack.Screen name="PreviewScreen" component={PreviewScreen} />
     </Stack.Navigator>
   );
 };

@@ -46,7 +46,7 @@ export default function GtakTabs() {
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ size, color }) => (
-            <IonIcons name="heart-sharp" size={size} color={color} />
+            <IonIcons name="people-circle" size={size} color={color} />
           ),
         }}
       />
@@ -55,7 +55,7 @@ export default function GtakTabs() {
         component={UploadScreen}
         options={{
           tabBarIcon: ({ size, color }) => (
-            <IonIcons name="heart-sharp" size={size} color={color} />
+            <IonIcons name="add-circle-sharp" size={size} color={color} />
           ),
         }}
       />
